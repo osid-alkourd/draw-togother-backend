@@ -106,5 +106,18 @@ export class WhiteboardsService {
       relations: ['owner', 'collaborators', 'collaborators.user'],
     });
   }
+
+  /**
+   * Find all whiteboards owned by a specific user
+   * @param ownerId - Owner user ID
+   * @returns Array of whiteboard entities
+   */
+  async findByOwner(ownerId: string): Promise<Whiteboard[]> {
+    return await this.whiteboardRepository.find({
+      where: { owner: { id: ownerId } },
+      relations: ['owner', 'collaborators', 'collaborators.user'],
+      order: { createdAt: 'DESC' }, // Most recent first
+    });
+  }
 }
 

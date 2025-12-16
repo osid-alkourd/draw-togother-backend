@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   HttpStatus,
   ValidationPipe,
@@ -60,6 +61,37 @@ export class WhiteboardsController {
         updatedAt: whiteboard.updatedAt,
       },
     };
+  }
+
+  /**
+   * Get all whiteboards owned by the current user
+   * Requires authentication
+   * @param user - Current authenticated user (from JWT token)
+   * @returns List of whiteboards owned by the user
+   */
+  @Get('my-whiteboards')
+  async getMyWhiteboards(@CurrentUser() user: User) {
+    try {
+      const whiteboards = await this.whiteboardsService.findByOwner(user.id);
+
+      return {
+        success: true,
+        statusCode: HttpStatus.OK,
+        message: 'Whiteboards retrieved successfully',
+        data: whiteboards.map((whiteboard) => ({
+          id: whiteboard.id,
+          name: whiteboard.title,
+          updated_at: whiteboard.updatedAt,
+        })),
+      };
+    } catch (error) {
+      return {
+        success: false,
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Failed to retrieve whiteboards',
+        data: [],
+      };
+    }
   }
 }
 
