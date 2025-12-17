@@ -65,5 +65,24 @@ export class WhiteboardCollaboratorsService {
       relations: ['user'],
     });
   }
+
+  /**
+   * Check if user is a collaborator on a whiteboard
+   * @param whiteboardId - Whiteboard ID
+   * @param userId - User ID
+   * @returns Collaborator entity if user is a collaborator, null otherwise
+   */
+  async findCollaboratorByUserAndWhiteboard(
+    whiteboardId: string,
+    userId: string,
+  ): Promise<WhiteboardCollaborator | null> {
+    return await this.collaboratorRepository.findOne({
+      where: {
+        whiteboardId,
+        userId,
+      },
+      relations: ['user'],
+    });
+  }
 }
 

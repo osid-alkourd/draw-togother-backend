@@ -1,4 +1,9 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Whiteboard } from './entities/whiteboard.entity';
@@ -118,6 +123,76 @@ export class WhiteboardsService {
       relations: ['owner', 'collaborators', 'collaborators.user'],
       order: { createdAt: 'DESC' }, // Most recent first
     });
+  }
+
+  /**
+   * Check if user has access to a whiteboard
+   * Access rules:
+   * - Owner can always access
+   * - Collaborators can access if they were invited
+   * - Private whiteboards (no collaborators) can only be accessed by owner
+   * @param whiteboard - Whiteboard entity
+   * @param user - User to check access for
+   * @returns true if user has access, false otherwise
+   */
+  async hasAccess(whiteboard: Whiteboard, user: User): Promise<boolean> {
+    // Owner always has access
+    if (whiteboard.owner.id === user.id) {
+      return true;
+    }
+
+    // Check if user is a collaborator (invited user)
+    const collaborator =
+      await this.collaboratorsService.findCollaboratorByUserAndWhiteboard(
+        whiteboard.id,
+        user.id,
+      );
+
+    // If user is a collaborator, they have access
+    return collaborator !== null;
+  }
+
+  /**
+   * Get whiteboard by ID with snapshots and access control
+   * @param whiteboardId - Whiteboard ID
+   * @param user - Current user requesting access
+   * @returns Whiteboard entity with snapshots
+   * @throws NotFoundException if whiteboard not found
+   * @throws ForbiddenException if user doesn't have access
+   */
+  async findByIdWithAccess(
+    whiteboardId: string,
+    user: User,
+  ): Promise<Whiteboard> {
+    // Find whiteboard with all relations
+    const whiteboard = await this.whiteboardRepository.findOne({
+      where: { id: whiteboardId },
+      relations: [
+        'owner',
+        'collaborators',
+        'collaborators.user',
+        'snapshots',
+      ],
+      order: {
+        snapshots: {
+          createdAt: 'ASC', // Oldest snapshots first
+        },
+      },
+    });
+
+    if (!whiteboard) {
+      throw new NotFoundException('Whiteboard not found');
+    }
+
+    // Check access
+    const hasAccess = await this.hasAccess(whiteboard, user);
+    if (!hasAccess) {
+      throw new ForbiddenException(
+        'You do not have permission to access this whiteboard',
+      );
+    }
+
+    return whiteboard;
   }
 }
 
