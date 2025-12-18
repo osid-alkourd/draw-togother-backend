@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Get,
+  Delete,
   Body,
   Param,
   HttpStatus,
@@ -190,6 +191,64 @@ export class WhiteboardsController {
         success: false,
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         message: 'Failed to add collaborator',
+        error: error.message,
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Delete a whiteboard (owner only)
+   * This will automatically delete all snapshots and collaborators due to CASCADE constraints
+   * Requires authentication and ownership
+   * @param id - Whiteboard ID
+   * @param user - Current authenticated user (must be the owner)
+   * @param res - Express response object for setting status codes
+   * @returns Success message
+   */
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  async deleteWhiteboard(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: User,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    try {
+      await this.whiteboardsService.delete(id, user);
+
+      return {
+        success: true,
+        statusCode: HttpStatus.OK,
+        message: 'Whiteboard deleted successfully',
+        data: null,
+      };
+    } catch (error) {
+      // Handle different error types
+      if (error instanceof NotFoundException) {
+        res.status(HttpStatus.NOT_FOUND);
+        return {
+          success: false,
+          statusCode: HttpStatus.NOT_FOUND,
+          message: error.message || 'Whiteboard not found',
+          data: null,
+        };
+      }
+
+      if (error instanceof ForbiddenException) {
+        res.status(HttpStatus.FORBIDDEN);
+        return {
+          success: false,
+          statusCode: HttpStatus.FORBIDDEN,
+          message: error.message || 'You do not have permission to delete this whiteboard',
+          data: null,
+        };
+      }
+
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+      return {
+        success: false,
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Failed to delete whiteboard',
         error: error.message,
         data: null,
       };

@@ -267,5 +267,35 @@ export class WhiteboardsService {
 
     return collaboratorWithUser;
   }
+
+  /**
+   * Delete a whiteboard (owner only)
+   * This will cascade delete all snapshots and collaborators due to CASCADE constraints
+   * @param whiteboardId - Whiteboard ID
+   * @param owner - Current user (must be the owner)
+   * @throws NotFoundException if whiteboard not found
+   * @throws ForbiddenException if user is not the owner
+   */
+  async delete(whiteboardId: string, owner: User): Promise<void> {
+    // Find whiteboard with owner relation
+    const whiteboard = await this.whiteboardRepository.findOne({
+      where: { id: whiteboardId },
+      relations: ['owner'],
+    });
+
+    if (!whiteboard) {
+      throw new NotFoundException('Whiteboard not found');
+    }
+
+    // Verify that the current user is the owner
+    if (whiteboard.owner.id !== owner.id) {
+      throw new ForbiddenException(
+        'Only the owner can delete this whiteboard',
+      );
+    }
+
+    // Delete whiteboard (CASCADE will automatically delete snapshots and collaborators)
+    await this.whiteboardRepository.remove(whiteboard);
+  }
 }
 
