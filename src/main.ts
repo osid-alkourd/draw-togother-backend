@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
+import { UnauthorizedExceptionFilter } from './common/filters/unauthorized-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +21,9 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  // Enable global exception filter for unauthorized exceptions
+  app.useGlobalFilters(new UnauthorizedExceptionFilter());
   
   await app.listen(process.env.PORT ?? 8000);
 }
