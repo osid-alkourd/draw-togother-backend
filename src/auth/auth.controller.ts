@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   Res,
   HttpStatus,
@@ -15,6 +16,8 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { User } from '../users/entities/user.entity';
 import { ValidationExceptionFilter } from '../common/filters/validation-exception.filter';
 
 @Controller('auth')
@@ -136,6 +139,30 @@ export class AuthController {
         message: error.message || 'Login failed',
       });
     }
+  }
+
+  /**
+   * Get current authenticated user
+   * Returns the user information for the authenticated user
+   * Requires authentication
+   * @param user - Current authenticated user (from JWT token)
+   * @returns User information
+   */
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getCurrentUser(@CurrentUser() user: User) {
+    return {
+      success: true,
+      message: 'User retrieved successfully',
+      user: {
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName,
+        isVerified: user.isVerified,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    };
   }
 
   /**
