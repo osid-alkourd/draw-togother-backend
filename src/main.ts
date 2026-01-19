@@ -33,6 +33,9 @@ async function bootstrap() {
   // Enable global exception filter for unauthorized exceptions
   app.useGlobalFilters(new UnauthorizedExceptionFilter());
   
+  // Note: WebSocket (Socket.IO) CORS is configured in WhiteboardGateway
+  // The gateway is accessible at /whiteboard namespace
+  
   await app.listen(process.env.PORT ?? 8000);
 }
 bootstrap();

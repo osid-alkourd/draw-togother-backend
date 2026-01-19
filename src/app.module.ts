@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { WhiteboardsModule } from './whiteboards/whiteboards.module';
 import { WhiteboardSnapshotsModule } from './whiteboard-snapshots/whiteboard-snapshots.module';
+import { WebSocketModule } from './websocket/websocket.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { WhiteboardSnapshotsModule } from './whiteboard-snapshots/whiteboard-sna
     UsersModule,
     WhiteboardsModule,
     WhiteboardSnapshotsModule,
+    WebSocketModule,
   ],
   controllers: [AppController],
   providers: [AppService],
