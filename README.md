@@ -1,98 +1,138 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Draw Together – Backend
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Draw Together is a real-time collaborative whiteboard application that allows multiple users to draw, design, and brainstorm together on shared boards. Users can create whiteboards, invite others to collaborate, and see changes appear instantly as participants draw or edit content. All drawing activity is synchronized in real time, while board snapshots are saved only when a user chooses to save, giving full control over when work becomes permanent.
 
-## Project setup
+The backend manages authentication, whiteboard access permissions, collaborator management, and snapshot storage, and it provides a real-time communication layer that keeps all connected users in sync.
+
+Built with [NestJS](https://github.com/nestjs/nest) framework and TypeScript.
+
+## Tech Stack
+
+### Backend
+- **NestJS** – Progressive Node.js framework
+- **Node.js** – JavaScript runtime
+- **TypeScript** – Type-safe JavaScript
+
+### Real-Time Communication
+- **WebSockets (Socket.IO)** – Real-time collaboration and live updates between users
+
+### Database
+- **PostgreSQL** – Relational database for users, whiteboards, collaborators, and snapshots
+- **TypeORM** – ORM for database modeling and migrations
+
+### Authentication & Security
+- **JWT (JSON Web Tokens)** – User authentication and authorization
+- **Passport.js** – Authentication middleware
+- **HttpOnly Cookies** – Secure token storage
+
+### Development & Tooling
+- **Docker** – Containerized database environment
+- **pgAdmin** – Database management interface
+
+## Requirements
+
+### System Requirements
+- **Node.js** (v18 or later recommended)
+- **npm** or **yarn**
+- **PostgreSQL** (local or Docker)
+- **Docker** (optional, for database setup)
+
+### Development Tools (Recommended)
+- **pgAdmin** – to view and manage PostgreSQL data
+- **Git** – version control
+- **Postman / Insomnia** – testing REST APIs
+
+## Installation
+
+### 1. Clone the repository
 
 ```bash
-$ npm install
+git clone https://github.com/osid-alkourd/draw-togother-backend
+cd draw-togother-backend
 ```
 
-## Compile and run the project
+### 2. Install dependencies
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
+### 3. Configure environment variables
+
+Create a `.env` file in the project root and provide the required values:
+
+```env
+DB_HOST=
+DB_PORT=
+DB_USERNAME=
+DB_PASSWORD=
+DB_NAME=
+PORT=
+JWT_SECRET=
+```
+
+### 4. Set up the database
+
+Make sure PostgreSQL is running (locally or via Docker).
+
+Then run database migrations:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run migration:run
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 5. Start the server
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# development mode
+npm run start
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
-## Resources
+## API Endpoints
 
-Check out a few resources that may come in handy when working with NestJS:
+### Authentication (`/api/auth`)
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+| Method | Endpoint | Description | Authentication |
+|--------|----------|-------------|----------------|
+| `POST` | `/api/auth/register` | Register a new user | No |
+| `POST` | `/api/auth/login` | Login user | No |
+| `GET` | `/api/auth/me` | Get current authenticated user | Required |
+| `POST` | `/api/auth/logout` | Logout user | Required |
 
-## Support
+### Whiteboards (`/api/whiteboards`)
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+| Method | Endpoint | Description | Authentication |
+|--------|----------|-------------|----------------|
+| `POST` | `/api/whiteboards` | Create a new whiteboard | Required |
+| `GET` | `/api/whiteboards/my-whiteboards` | Get all whiteboards owned by current user | Required |
+| `GET` | `/api/whiteboards/shared-with-me` | Get all whiteboards shared with current user | Required |
+| `GET` | `/api/whiteboards/:id` | Get whiteboard by ID (with access check) | Required |
+| `PATCH` | `/api/whiteboards/:id/rename` | Rename a whiteboard (owner only) | Required |
+| `DELETE` | `/api/whiteboards/:id` | Delete a whiteboard (owner only) | Required |
+| `POST` | `/api/whiteboards/:id/collaborators` | Add a collaborator to whiteboard (owner only) | Required |
+| `DELETE` | `/api/whiteboards/:id/collaborators` | Remove a collaborator from whiteboard (owner only) | Required |
+| `DELETE` | `/api/whiteboards/:id/leave` | Leave a whiteboard (collaborator only) | Required |
+| `POST` | `/api/whiteboards/:id/duplicate` | Duplicate a whiteboard (owner only) | Required |
 
-## Stay in touch
+### Snapshots (`/api/whiteboards/:whiteboardId/snapshots`)
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+| Method | Endpoint | Description | Authentication |
+|--------|----------|-------------|----------------|
+| `POST` | `/api/whiteboards/:whiteboardId/snapshots` | Save or update snapshot for a whiteboard | Required |
 
-## License
+### WebSocket Events
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+The application uses WebSocket connections for real-time collaboration. Connect to the WebSocket server at the same host/port as the REST API.
+
+**Connection**: Requires JWT authentication via cookie or query parameter.
+
+**Events**:
+- `join-whiteboard` â€“ Join a whiteboard room
+- `leave-whiteboard` â€“ Leave a whiteboard room
+- `draw` â€“ Broadcast drawing actions to all users in the room
+- `clear-canvas` â€“ Clear the canvas for all users
+- `undo` â€“ Undo last action
+- `redo` â€“ Redo last undone action
